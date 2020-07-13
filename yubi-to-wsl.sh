@@ -245,11 +245,13 @@ cd $INSTALL_TARGET
 
 if [[ -f $PID_FILE_SOCAT ]] && kill -0 \$(cat $PID_FILE_SOCAT) >> /dev/null 2>&1; then
     SOCAT_PID=\$(cat $PID_FILE_SOCAT)
-    echo "$BIN_NPIPRELAY and socat running with PID \$SOCAT_PID"
+    echo "socat/npirelay running with PID \$SOCAT_PID"
 else
     rm -f "$GPG_AGENT_SOCK_FILE"
     (trap "rm $PID_FILE_SOCAT" exit; socat UNIX-LISTEN:"$GPG_AGENT_SOCK_FILE,fork" EXEC:'$INSTALL_TARGET/$BIN_NPIPRELAY -ei -ep -s -a "$GPG_AGENT_SOCK_FILE_WIN"',nofork </dev/null &>/dev/null) &
-    echo $! > $PID_FILE_SOCAT
+    SOCAT_PID=\$1
+    echo "\$SOCAT_PID" > $PID_FILE_SOCAT
+    echo "socat/npirelay started with PID \$SOCAT_PID"
 fi
 
 if [[ -f $PID_FILE_PAGEANT ]] && kill -0 \$(cat $PID_FILE_PAGEANT) >> /dev/null 2>&1; then
