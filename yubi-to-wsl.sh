@@ -295,7 +295,7 @@ fi
 EOF
 
 read -r -d '' ENV_FILE << EOF
-export GPG_TTY=$(tty)
+export GPG_TTY=\$(tty)
 export SSH_AUTH_SOCK=$INSTALL_TARGET/$SSH_SOCK_FILE
 EOF
 
