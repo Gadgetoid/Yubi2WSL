@@ -248,8 +248,9 @@ if [[ -f $PID_FILE_SOCAT ]] && kill -0 \$(cat $PID_FILE_SOCAT) >> /dev/null 2>&1
     echo "socat/npirelay running with PID \$SOCAT_PID"
 else
     rm -f "$GPG_AGENT_SOCK_FILE"
-    (trap "rm $PID_FILE_SOCAT" exit; socat UNIX-LISTEN:"$GPG_AGENT_SOCK_FILE,fork" EXEC:'$INSTALL_TARGET/$BIN_NPIPRELAY -ei -ep -s -a "$GPG_AGENT_SOCK_FILE_WIN"',nofork </dev/null &>/dev/null) &
-    SOCAT_PID=\$1
+    rm -f "$PID_FILE_SOCAT"
+    socat UNIX-LISTEN:"$GPG_AGENT_SOCK_FILE,fork" EXEC:'$INSTALL_TARGET/$BIN_NPIPRELAY -ei -ep -s -a "$GPG_AGENT_SOCK_FILE_WIN"',nofork </dev/null &>/dev/null &
+    SOCAT_PID=\$!
     echo "\$SOCAT_PID" > $PID_FILE_SOCAT
     echo "socat/npirelay started with PID \$SOCAT_PID"
 fi
@@ -258,7 +259,8 @@ if [[ -f $PID_FILE_PAGEANT ]] && kill -0 \$(cat $PID_FILE_PAGEANT) >> /dev/null 
     PAGEANT_PID=\$(cat $PID_FILE_PAGEANT)
     echo "Pageant running with PID \$PAGEANT_PID"
 else
-    rm -f $SSH_SOCK_FILE
+    rm -f "$SSH_SOCK_FILE"
+    rm -f "$PID_FILE_PAGEANT"
     ./$BIN_PAGEANT --wsl "$WIN_TARGET\\$SSH_SOCK_FILE" &
     PAGEANT_PID=\$!
     echo "\$PAGEANT_PID" > $PID_FILE_PAGEANT
