@@ -44,6 +44,8 @@ SH_ENV=env.sh
 SSH_SOCK_FILE=ssh-agent.sock
 GPG_AGENT_SOCK_FILE=$HOME/.gnupg/S.gpg-agent
 GPG_AGENT_SOCK_FILE_WIN=C:/Users/$USERNAME/AppData/Roaming/gnupg/S.gpg-agent
+GPG_AGENT_EXTRA_SOCK_FILE=$HOME/.gnupg/S.gpg-agent.extra
+GPG_AGENT_EXTRA_SOCK_FILE_WIN=C:/Users/$USERNAME/AppData/Roaming/gnupg/S.gpg-agent.extra
 PID_FILE_PAGEANT=pageant.pid
 PID_FILE_SOCAT=socat.pid
 
@@ -255,6 +257,18 @@ else
     echo "socat/npirelay started with PID \$SOCAT_PID"
 fi
 
+if [[ -f $PID_FILE_SOCAT_EXTRA ]] && kill -0 \$(cat $PID_FILE_SOCAT_EXTRA) >> /dev/null 2>&1; then
+    SOCAT_PID=\$(cat $PID_FILE_SOCAT_EXTRA)
+    echo "socat/npirelay (extra) running with PID \$SOCAT_PID"
+else
+    rm -f "$GPG_AGENT_EXTRA_SOCK_FILE"
+    rm -f "$PID_FILE_SOCAT_EXTRA"
+    socat UNIX-LISTEN:"$GPG_AGENT_EXTRA_SOCK_FILE,fork" EXEC:'$INSTALL_TARGET/$BIN_NPIPRELAY -ei -ep -s -a "$GPG_AGENT_EXTRA_SOCK_FILE_WIN"',nofork </dev/null &>/dev/null &
+    SOCAT_PID=\$!
+    echo "\$SOCAT_PID" > $PID_FILE_SOCAT_EXTRA
+    echo "socat/npirelay (extra) started with PID \$SOCAT_PID"
+fi
+
 if [[ -f $PID_FILE_PAGEANT ]] && kill -0 \$(cat $PID_FILE_PAGEANT) >> /dev/null 2>&1; then
     PAGEANT_PID=\$(cat $PID_FILE_PAGEANT)
     echo "Pageant running with PID \$PAGEANT_PID"
@@ -283,6 +297,18 @@ if [[ -f $PID_FILE_SOCAT ]]; then
     fi
 else
     echo "npiprelay and socat not running ($PID_FILE_SOCAT not found)"
+fi
+
+if [[ -f $PID_FILE_SOCAT_EXTRA ]]; then
+    if kill -0 \$(cat $PID_FILE_SOCAT_EXTRA) >> /dev/null 2>&1; then
+        kill \$(cat $PID_FILE_SOCAT_EXTRA)
+        echo "Stopped npiprelay and socat (extra)"
+    else
+        echo "npiprelay and socat (extra) not running (removing $PID_FILE_SOCAT_EXTRA)"
+        rm -rf $PID_FILE_SOCAT_EXTRA
+    fi
+else
+    echo "npiprelay and socat (extra) not running ($PID_FILE_SOCAT_EXTRA not found)"
 fi
 
 if [[ -f $PID_FILE_PAGEANT ]]; then
