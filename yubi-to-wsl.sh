@@ -48,6 +48,7 @@ GPG_AGENT_EXTRA_SOCK_FILE=$HOME/.gnupg/S.gpg-agent.extra
 GPG_AGENT_EXTRA_SOCK_FILE_WIN=C:/Users/$USERNAME/AppData/Roaming/gnupg/S.gpg-agent.extra
 PID_FILE_PAGEANT=pageant.pid
 PID_FILE_SOCAT=socat.pid
+PID_FILE_SOCAT_EXTRA=socat_extra.pid
 
 
 EXE_GPGCONF="/mnt/c/Program Files (x86)/GnuPG/bin/gpgconf.exe"
