@@ -337,6 +337,6 @@ echo "Creating: $INSTALL_TARGET/$SH_STOP"
 echo "$STOP_FILE" > $INSTALL_TARGET/$SH_STOP
 
 success "\nInstall Done!"
-echo "Now add the following to your ~/bashrc:"
+echo "Now add the following to your ~/.bashrc:"
 echo "$INSTALL_TARGET/$SH_START"
 cat "$INSTALL_TARGET/$SH_ENV"

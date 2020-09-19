@@ -39,7 +39,7 @@ A typical installation will include either GPG4WIN (`--install-gpg4win`) or GnuP
 For example:
 
 ```
-./yubi-to-wsl --install-target /mnt/c/yubi2wsl
+./yubi-to-wsl.sh --install-target /mnt/c/yubi2wsl
 ```
 
 Once installed and running, plug in your YubiKey and verify operation of SSH with:
